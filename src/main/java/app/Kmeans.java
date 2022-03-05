@@ -15,9 +15,11 @@ public class Kmeans {
   static final String PATH_FILE = "/home/lars/Fatec/Fabricio/roads/img5.jpeg";
   static final String PATH_SAIDA = "/home/lars/Fatec/Fabricio/pixels/road_google_maps_6.png";
   static final String MENSAGEM_SAIDA = "Imagem gerada no path: " + PATH_SAIDA;
+  static final int K = 4;
+  static final int C = 2;
 
   public static void main(String[] args) throws IOException {
-    calcularKmeans(4);
+    calcularKmeans(K);
     definirCentroideMaisProximoEGerarImagem();
   }
 
@@ -62,7 +64,7 @@ public class Kmeans {
 
   private static void calcularKmeans(int k) throws IOException {
     var img = readPathImg();
-    inicializarCentroidesAleatorios(2);
+    inicializarCentroidesAleatorios(C);
     for (int i = 0; i < k; i++) {
       centroides.forEach(Centroide::limparLista);
       for (Rgb ponto : dados) {

@@ -22,16 +22,11 @@ public class Kmeans {
   }
 
   private static BufferedImage readPathImg() throws IOException {
-    File file = new File(PATH_FILE);
-    BufferedImage img = ImageIO.read(file);
+    var img = ImageIO.read(new File(PATH_FILE));
     for (int y = 0; y < img.getHeight(); y++) {
       for (int x = 0; x < img.getWidth(); x++) {
-        int pixel = img.getRGB(x, y);
-        Color color = new Color(pixel, true);
-        var rgb = new Rgb();
-        rgb.setR(color.getRed());
-        rgb.setG(color.getGreen());
-        rgb.setB(color.getBlue());
+        var color = new Color(img.getRGB(x, y), true);
+        var rgb = new Rgb(color.getRed(), color.getGreen(), color.getBlue());
         dados.add(rgb);
       }
     }
@@ -46,8 +41,7 @@ public class Kmeans {
         preencherOutImg(img, outImg, dadosIterator, y, x);
       }
     }
-    File f = new File(PATH_SAIDA);
-    ImageIO.write(outImg, "png", f);
+    ImageIO.write(outImg, "png", new File(PATH_SAIDA));
     System.out.println(MENSAGEM_SAIDA);
   }
 
@@ -55,13 +49,9 @@ public class Kmeans {
       BufferedImage img, BufferedImage outImg, Iterator<Rgb> dadosIterator, int y, int x) {
     if (dadosIterator.hasNext()) {
       int pixel = img.getRGB(x, y);
-      Color color = new Color(pixel, true);
+      var color = new Color(pixel, true);
       var centro = dadosIterator.next().getCentroide().getCentro();
-      int a = color.getAlpha();
-      int r = centro.getR();
-      int g = centro.getG();
-      int b = centro.getB();
-      int p = getPixel(a, r, g, b);
+      int p = getPixel(color.getAlpha(), centro.getR(), centro.getG(), centro.getB());
       outImg.setRGB(x, y, p);
     }
   }
@@ -71,7 +61,7 @@ public class Kmeans {
   }
 
   private static void calcularKmeans(int k) throws IOException {
-    BufferedImage img = readPathImg();
+    var img = readPathImg();
     inicializarCentroidesAleatorios(2);
     for (int i = 0; i < k; i++) {
       centroides.forEach(Centroide::limparLista);

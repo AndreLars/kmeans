@@ -8,6 +8,9 @@ public class Centroide {
     private Rgb centro;
     private List<Rgb> pontosAssociados;
 
+    public Centroide() {
+    }
+
     public Centroide(int c, Rgb centro) {
         this.c = c;
         this.centro = centro;

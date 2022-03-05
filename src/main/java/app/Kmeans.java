@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,11 +13,11 @@ import java.util.List;
 public class Kmeans {
   static List<Rgb> dados = new ArrayList<>();
   static List<Centroide> centroides = new ArrayList<>();
-  static final String PATH_FILE = "/home/lars/Fatec/Fabricio/roads/img5.jpeg";
-  static final String PATH_SAIDA = "/home/lars/Fatec/Fabricio/pixels/road_google_maps_6.png";
-  static final String MENSAGEM_SAIDA = "Imagem gerada no path: " + PATH_SAIDA;
-  static final int K = 4;
-  static final int C = 2;
+  static final String PATH_FILE = "img/img1.jpeg";
+  static final String PATH_SAIDA = "output/output.png";
+  static final String MENSAGEM_SAIDA = "Imagem gerada na pasta target/classes/output";
+  static final int K = 6;
+  static final int C = 4;
 
   public static void main(String[] args) throws IOException {
     calcularKmeans(K);
@@ -24,12 +25,16 @@ public class Kmeans {
   }
 
   private static BufferedImage readPathImg() throws IOException {
-    var img = ImageIO.read(new File(PATH_FILE));
-    for (int y = 0; y < img.getHeight(); y++) {
-      for (int x = 0; x < img.getWidth(); x++) {
-        var color = new Color(img.getRGB(x, y), true);
-        var rgb = new Rgb(color.getRed(), color.getGreen(), color.getBlue());
-        dados.add(rgb);
+    URL url = Kmeans.class.getClassLoader().getResource(PATH_FILE);
+    BufferedImage img = null;
+    if (url != null) {
+      img = ImageIO.read(new File(url.getPath()));
+      for (int y = 0; y < img.getHeight(); y++) {
+        for (int x = 0; x < img.getWidth(); x++) {
+          var color = new Color(img.getRGB(x, y), true);
+          var rgb = new Rgb(color.getRed(), color.getGreen(), color.getBlue());
+          dados.add(rgb);
+        }
       }
     }
     return img;
@@ -43,7 +48,8 @@ public class Kmeans {
         preencherOutImg(img, outImg, dadosIterator, y, x);
       }
     }
-    ImageIO.write(outImg, "png", new File(PATH_SAIDA));
+    URL url = Kmeans.class.getClassLoader().getResource(PATH_SAIDA);
+    ImageIO.write(outImg, "png", new File(url.getPath()));
     System.out.println(MENSAGEM_SAIDA);
   }
 

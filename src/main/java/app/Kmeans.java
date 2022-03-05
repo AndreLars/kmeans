@@ -26,15 +26,12 @@ public class Kmeans {
 
   private static BufferedImage readPathImg() throws IOException {
     URL url = Kmeans.class.getClassLoader().getResource(PATH_FILE);
-    BufferedImage img = null;
-    if (url != null) {
-      img = ImageIO.read(new File(url.getPath()));
-      for (int y = 0; y < img.getHeight(); y++) {
-        for (int x = 0; x < img.getWidth(); x++) {
-          var color = new Color(img.getRGB(x, y), true);
-          var rgb = new Rgb(color.getRed(), color.getGreen(), color.getBlue());
-          dados.add(rgb);
-        }
+    var img = ImageIO.read(new File(url.getPath()));
+    for (int y = 0; y < img.getHeight(); y++) {
+      for (int x = 0; x < img.getWidth(); x++) {
+        var color = new Color(img.getRGB(x, y), true);
+        var rgb = new Rgb(color.getRed(), color.getGreen(), color.getBlue());
+        dados.add(rgb);
       }
     }
     return img;

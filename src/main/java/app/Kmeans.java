@@ -13,15 +13,15 @@ import java.util.List;
 public class Kmeans {
   static List<Rgb> dados = new ArrayList<>();
   static List<Centroide> centroides = new ArrayList<>();
-  static final String PATH_FILE = "img/img1.jpeg";
+  static final String PATH_FILE = "img/img2.jpeg";
   static final String PATH_SAIDA = "output/output.png";
   static final String MENSAGEM_SAIDA = "Imagem gerada na pasta target/classes/output";
-  static final int K = 6;
-  static final int C = 4;
+  static final int K = 3;
+  static final int C = 2;
 
   public static void main(String[] args) throws IOException {
     calcularKmeans(K);
-    definirCentroideMaisProximoEGerarImagem();
+//    definirCentroideMaisProximoEGerarImagem();
   }
 
   private static BufferedImage readPathImg() throws IOException {
@@ -79,11 +79,12 @@ public class Kmeans {
   }
 
   private static void definirCentroideMaisProximoEGerarImagem() throws IOException {
-    readPathImg();
+    var img = readPathImg();
     inicializarCentroides();
     for (Rgb ponto : dados) {
       definirCentroideDeUmPonto(ponto);
     }
+    gerarImagem(img);
   }
 
   private static void definirCentroideDeUmPonto(Rgb ponto) {
@@ -117,7 +118,9 @@ public class Kmeans {
   }
 
   private static void inicializarCentroides() {
-    centroides.add(new Centroide(1, new Rgb(4, 7, 13)));
-    centroides.add(new Centroide(2, new Rgb(49, 54, 42)));
+    centroides.add(new Centroide(1, new Rgb(38, 42, 43)));
+    centroides.add(new Centroide(2, new Rgb(55, 78, 48)));
+    centroides.add(new Centroide(3, new Rgb(71, 86, 82)));
+    centroides.add(new Centroide(4, new Rgb(104, 135, 59)));
   }
 }

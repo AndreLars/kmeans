@@ -13,7 +13,7 @@ public class Kmeans {
   static List<Pixel> dados = new ArrayList<>();
   static Set<Pixel> setDados = new HashSet<>();
   static List<Pixel> dadosKnn = new ArrayList<>();
-  static Set<Pixel> setDadosKnn = new HashSet<>();
+  static Map<Pixel, Pixel> mapDadosKnn = new HashMap<>();
   static List<Centroide> centroides = new ArrayList<>();
   static final String PATH_SAIDA = "output/";
   static final String MENSAGEM_SAIDA = "Imagem gerada na pasta target/classes/output";
@@ -59,11 +59,8 @@ public class Kmeans {
       for (int x = 0; x < img.getWidth(); x++) {
         var color = new Color(img.getRGB(x, y), true);
         var pixel = new Pixel(color.getRed(), color.getGreen(), color.getBlue());
-        if(setDadosKnn.contains(pixel)) {
-          setDadosKnn.stream().filter(pixel::equals).findFirst().ifPresent(p -> {
-            pixel.setCentroide(p.getCentroide());
-            dadosKnn.add(pixel);
-          });
+        if(mapDadosKnn.containsKey(pixel)) {
+          dadosKnn.add(mapDadosKnn.get(pixel));
         } else {
           PriorityQueue<Pixel> pq = new PriorityQueue<>(K, SORT_BY_REVERSE_PIXEL_DISTANCE);
           for (Pixel dado : setDados) {
@@ -87,7 +84,7 @@ public class Kmeans {
           }
           pixel.setCentroide(maior);
           dadosKnn.add(pixel);
-          setDadosKnn.add(pixel);
+          mapDadosKnn.put(pixel, pixel);
         }
       }
     }

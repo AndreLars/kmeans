@@ -6,27 +6,52 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 
 public class Kmeans {
   static List<Rgb> dados = new ArrayList<>();
   static List<Centroide> centroides = new ArrayList<>();
-  static final String PATH_FILE = "img/img2.jpeg";
-  static final String PATH_SAIDA = "output/output.png";
+  static final String PATH_SAIDA = "output/";
   static final String MENSAGEM_SAIDA = "Imagem gerada na pasta target/classes/output";
-  static final int K = 3;
+  static final int K = 4;
   static final int C = 2;
+  static final Random rand = new Random();
 
   public static void main(String[] args) throws IOException {
-    calcularKmeans(K);
-//    definirCentroideMaisProximoEGerarImagem();
+    var scanner = new Scanner(System.in);
+    while (true) {
+      printMenu();
+      int input = Integer.parseInt(scanner.nextLine());
+      if (input == 1) {
+        System.out.println("Escreva o nome do arquivo e extensão:");
+        var path = new StringBuilder("img/");
+        var nomeArquivo = scanner.nextLine();
+        path.append(nomeArquivo);
+        calcularKmeans(K, path);
+      } else if (input == 2) {
+        System.out.println("Escreva o nome do arquivo e extensão:");
+        var path = new StringBuilder("img/");
+        var nomeArquivo = scanner.nextLine();
+        path.append(nomeArquivo);
+        definirCentroideMaisProximoEGerarImagem(path);
+      } else if (input == -1) {
+        break;
+      }
+    }
   }
 
-  private static BufferedImage readPathImg() throws IOException {
-    URL url = Kmeans.class.getClassLoader().getResource(PATH_FILE);
+  private static void printMenu() {
+    System.out.println("========MENU========");
+    System.out.println("1: Kmeans");
+    System.out.println("2: Gerar Imagem");
+    System.out.println("-1: Parar Programa");
+  }
+
+  private static BufferedImage readPathImg(StringBuilder path) throws IOException {
+    URL url = Kmeans.class.getClassLoader().getResource(path.toString());
     var img = ImageIO.read(new File(url.getPath()));
+    dados.clear();
     for (int y = 0; y < img.getHeight(); y++) {
       for (int x = 0; x < img.getWidth(); x++) {
         var color = new Color(img.getRGB(x, y), true);
@@ -45,8 +70,9 @@ public class Kmeans {
         preencherOutImg(img, outImg, dadosIterator, y, x);
       }
     }
+    final var arquivoSaida = "output" + rand.nextInt() + ".png";
     URL url = Kmeans.class.getClassLoader().getResource(PATH_SAIDA);
-    ImageIO.write(outImg, "png", new File(url.getPath()));
+    ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
     System.out.println(MENSAGEM_SAIDA);
   }
 
@@ -65,8 +91,8 @@ public class Kmeans {
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
-  private static void calcularKmeans(int k) throws IOException {
-    var img = readPathImg();
+  private static void calcularKmeans(int k, StringBuilder path) throws IOException {
+    var img = readPathImg(path);
     inicializarCentroidesAleatorios(C);
     for (int i = 0; i < k; i++) {
       centroides.forEach(Centroide::limparLista);
@@ -78,9 +104,9 @@ public class Kmeans {
     gerarImagem(img);
   }
 
-  private static void definirCentroideMaisProximoEGerarImagem() throws IOException {
-    var img = readPathImg();
-    inicializarCentroides();
+  private static void definirCentroideMaisProximoEGerarImagem(StringBuilder path)
+      throws IOException {
+    var img = readPathImg(path);
     for (Rgb ponto : dados) {
       definirCentroideDeUmPonto(ponto);
     }
@@ -115,12 +141,5 @@ public class Kmeans {
     for (int i = 0; i < numeroCentroides; i++) {
       centroides.add(new Centroide(i + 1, Rgb.random()));
     }
-  }
-
-  private static void inicializarCentroides() {
-    centroides.add(new Centroide(1, new Rgb(38, 42, 43)));
-    centroides.add(new Centroide(2, new Rgb(55, 78, 48)));
-    centroides.add(new Centroide(3, new Rgb(71, 86, 82)));
-    centroides.add(new Centroide(4, new Rgb(104, 135, 59)));
   }
 }

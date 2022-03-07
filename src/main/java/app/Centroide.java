@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Centroide {
     private int c;
-    private Rgb centro;
-    private List<Rgb> pontosAssociados;
+    private Pixel centro;
+    private List<Pixel> pontosAssociados;
 
     public Centroide() {
     }
 
-    public Centroide(int c, Rgb centro) {
+    public Centroide(int c, Pixel centro) {
         this.c = c;
         this.centro = centro;
         this.pontosAssociados = new ArrayList<>();
@@ -25,30 +25,30 @@ public class Centroide {
         this.c = c;
     }
 
-    public Rgb getCentro() {
+    public Pixel getCentro() {
         return centro;
     }
 
-    public void setCentro(Rgb centro) {
+    public void setCentro(Pixel centro) {
         this.centro = centro;
     }
 
-    public List<Rgb> getPontosAssociados() {
+    public List<Pixel> getPontosAssociados() {
         return pontosAssociados;
     }
 
-    public void setPontosAssociados(List<Rgb> pontosAssociados) {
+    public void setPontosAssociados(List<Pixel> pontosAssociados) {
         this.pontosAssociados = pontosAssociados;
     }
 
-    public void addPonto(Rgb ponto) {
+    public void addPonto(Pixel ponto) {
         this.pontosAssociados.add(ponto);
         ponto.setCentroide(this);
     }
 
     public void atualizarCentro() {
-        var novoCentro = new Rgb();
-        for(Rgb ponto : pontosAssociados) {
+        var novoCentro = new Pixel();
+        for(Pixel ponto : pontosAssociados) {
             novoCentro.atualizarPontoMedio(ponto);
         }
         setCentro(novoCentro);

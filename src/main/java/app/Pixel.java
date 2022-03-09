@@ -71,12 +71,6 @@ public class Pixel {
             + Math.pow((double) b - ponto.getB(), 2));
   }
 
-  public void atualizarPontoMedio(Pixel ponto) {
-    setR((getR() + ponto.getR()) / 2);
-    setG((getG() + ponto.getG()) / 2);
-    setB((getB() + ponto.getB()) / 2);
-  }
-
   @Override
   public String toString() {
     return "Rgb{" +

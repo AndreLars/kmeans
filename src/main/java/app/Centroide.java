@@ -48,9 +48,17 @@ public class Centroide {
 
     public void atualizarCentro() {
         var novoCentro = new Pixel();
+        var somatorioR = 0;
+        var somatorioG = 0;
+        var somatorioB = 0;
         for(Pixel ponto : pontosAssociados) {
-            novoCentro.atualizarPontoMedio(ponto);
+            somatorioR += ponto.getR();
+            somatorioG += ponto.getG();
+            somatorioB += ponto.getB();
         }
+        novoCentro.setR(somatorioR / pontosAssociados.size());
+        novoCentro.setG(somatorioG / pontosAssociados.size());
+        novoCentro.setB(somatorioB / pontosAssociados.size());
         setCentro(novoCentro);
     }
 

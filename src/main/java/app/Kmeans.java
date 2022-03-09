@@ -6,8 +6,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Kmeans {
   static List<Pixel> dados = new ArrayList<>();
@@ -15,12 +23,12 @@ public class Kmeans {
   static Map<Pixel, Pixel> mapDadosKnn = new HashMap<>();
   static List<Centroide> centroides = new ArrayList<>();
   static final String PATH_SAIDA = "output/";
-  static final String MENSAGEM_SAIDA = "Imagem gerada na pasta target/classes/output";
+  static final String MENSAGEM_SAIDA = "Imagem gerada na pasta build/resources/main/output";
   static final int K = 10;
   static final int C = 5;
   static final Random rand = new Random();
   static final SortByReversePixelDistance SORT_BY_REVERSE_PIXEL_DISTANCE =
-      new SortByReversePixelDistance();
+    new SortByReversePixelDistance();
 
   public static void main(String[] args) throws IOException {
     var scanner = new Scanner(System.in);
@@ -111,7 +119,7 @@ public class Kmeans {
           while (Objects.nonNull(fila.peek())) {
             var centroide = fila.poll().getCentroide();
             qtdCentroideVizinhosMaisProximos.put(
-                centroide, qtdCentroideVizinhosMaisProximos.getOrDefault(centroide, 0) + 1);
+              centroide, qtdCentroideVizinhosMaisProximos.getOrDefault(centroide, 0) + 1);
             var qtd = qtdCentroideVizinhosMaisProximos.getOrDefault(centroide, 0);
             if (qtd > qtdMaisFrequente) {
               qtdMaisFrequente = qtd;
@@ -173,7 +181,7 @@ public class Kmeans {
   }
 
   private static void preencherOutImg(
-      BufferedImage img, BufferedImage outImg, Iterator<Pixel> dadosIterator, int y, int x) {
+    BufferedImage img, BufferedImage outImg, Iterator<Pixel> dadosIterator, int y, int x) {
     if (dadosIterator.hasNext()) {
       int pixel = img.getRGB(x, y);
       var color = new Color(pixel, true);
@@ -201,7 +209,7 @@ public class Kmeans {
   }
 
   private static void gerarImagemAPartirDosCentroidesKmeans(String path)
-      throws IOException {
+    throws IOException {
     var img = readPathImg(path);
     for (Pixel ponto : dados) {
       definirCentroideDeUmPonto(ponto);

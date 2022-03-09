@@ -1,10 +1,17 @@
 plugins {
     id 'java'
+    id 'application'
 }
+
+mainClassName = 'app.Kmeans'
 
 group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+run {
+    standardInput = System.in
 }

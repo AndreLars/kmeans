@@ -47,19 +47,21 @@ public class Centroide {
     }
 
     public void atualizarCentro() {
-        var novoCentro = new Pixel();
-        var somatorioR = 0;
-        var somatorioG = 0;
-        var somatorioB = 0;
-        for(Pixel ponto : pontosAssociados) {
-            somatorioR += ponto.getR();
-            somatorioG += ponto.getG();
-            somatorioB += ponto.getB();
+        if(!pontosAssociados.isEmpty()) {
+            var novoCentro = new Pixel();
+            var somatorioR = 0;
+            var somatorioG = 0;
+            var somatorioB = 0;
+            for(Pixel ponto : pontosAssociados) {
+                somatorioR += ponto.getR();
+                somatorioG += ponto.getG();
+                somatorioB += ponto.getB();
+            }
+            novoCentro.setR(somatorioR / pontosAssociados.size());
+            novoCentro.setG(somatorioG / pontosAssociados.size());
+            novoCentro.setB(somatorioB / pontosAssociados.size());
+            setCentro(novoCentro);
         }
-        novoCentro.setR(somatorioR / pontosAssociados.size());
-        novoCentro.setG(somatorioG / pontosAssociados.size());
-        novoCentro.setB(somatorioB / pontosAssociados.size());
-        setCentro(novoCentro);
     }
 
     public void limparLista() {

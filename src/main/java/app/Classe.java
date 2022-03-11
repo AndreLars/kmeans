@@ -3,26 +3,13 @@ package app;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Centroide {
-    private int c;
+public class Classe {
     private Pixel centro;
     private List<Pixel> pontosAssociados;
 
-    public Centroide() {
-    }
-
-    public Centroide(int c, Pixel centro) {
-        this.c = c;
+    public Classe(Pixel centro) {
         this.centro = centro;
         this.pontosAssociados = new ArrayList<>();
-    }
-
-    public int getC() {
-        return c;
-    }
-
-    public void setC(int c) {
-        this.c = c;
     }
 
     public Pixel getCentro() {
@@ -43,7 +30,7 @@ public class Centroide {
 
     public void addPonto(Pixel ponto) {
         this.pontosAssociados.add(ponto);
-        ponto.setCentroide(this);
+        ponto.setClasse(this);
     }
 
     public void atualizarCentro() {
@@ -70,9 +57,8 @@ public class Centroide {
 
     @Override
     public String toString() {
-        return "Centroide{" +
-                "k=" + c +
-                ", centro=" + centro +
+        return "Classe{" +
+                "centro=" + centro +
                 '}';
     }
 }

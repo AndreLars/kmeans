@@ -7,7 +7,7 @@ public class Pixel {
   private int r;
   private int g;
   private int b;
-  private Centroide centroide;
+  private Classe classe;
   private double distance;
 
   private static final Random random = new Random();
@@ -48,12 +48,12 @@ public class Pixel {
     this.b = b;
   }
 
-  public Centroide getCentroide() {
-    return centroide;
+  public Classe getClasse() {
+    return classe;
   }
 
-  public void setCentroide(Centroide centroide) {
-    this.centroide = centroide;
+  public void setClasse(Classe classe) {
+    this.classe = classe;
   }
 
   public double getDistance() {

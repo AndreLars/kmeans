@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Classe {
     private Pixel centro;
@@ -60,5 +61,18 @@ public class Classe {
         return "Classe{" +
                 "centro=" + centro +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Classe classe = (Classe) o;
+        return Objects.equals(getCentro(), classe.getCentro());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCentro());
     }
 }

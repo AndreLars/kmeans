@@ -6,82 +6,26 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static app.Main.MENSAGEM_SAIDA;
+import static app.Main.PATH_SAIDA;
+
 public class Kmeans {
-  static List<Pixel> dados = new ArrayList<>();
-  static List<Pixel> dadosKnn = new ArrayList<>();
-  static Map<Pixel, Pixel> mapDadosKnn = new HashMap<>();
-  static List<Classe> classes = new ArrayList<>();
-  static final String PATH_SAIDA = "output/";
-  static final String MENSAGEM_SAIDA = "Imagem gerada na pasta build/resources/main/output";
-  static int K;
-  static int C;
-  static final Random rand = new Random();
-  static final SortByReversePixelDistance SORT_BY_REVERSE_PIXEL_DISTANCE =
-    new SortByReversePixelDistance();
+  private final List<Classe> classes = new ArrayList<>();
+  private final List<Pixel> dados = new ArrayList<>();
 
-  public static void main(String[] args) throws IOException {
-    var scanner = new Scanner(System.in);
-    System.out.println("Insira o valor de vizinhos do KNN");
-    K = Integer.parseInt(scanner.nextLine());
-    System.out.println("Insira o valor de Classes/Categorias do K-Means");
-    C = Integer.parseInt(scanner.nextLine());
-    while (true) {
-      var dadosRef = construirDadosReferenciaKNN();
-      printMenu();
-      int input = Integer.parseInt(scanner.nextLine());
-      if (input == 1) {
-        var path = readInput(scanner);
-        calcularKmeans(path);
-      } else if (input == 2) {
-        var path = readInput(scanner);
-        gerarImagemAPartirDosClassesKmeans(path);
-      } else if (input == 3) {
-        var path = readInput(scanner);
-        calcularKnn(path, dadosRef);
-      } else if (input == -1) {
-        break;
-      }
-    }
-  }
-
-  private static LinkedHashSet<Pixel> construirDadosReferenciaKNN() throws IOException {
-    var refRoad = readRefImg("ref/road.jpeg");
-    categorizarRef(refRoad);
-    var refWoods = readRefImg("ref/woods.jpeg");
-    categorizarRef(refWoods);
-    var dadosRef = new LinkedHashSet<>(refRoad);
-    dadosRef.addAll(refWoods);
-    classes = new ArrayList<>();
-    return dadosRef;
-  }
-
-  private static void printMenu() {
-    System.out.println("========MENU========");
-    System.out.println("1: Kmeans");
-    System.out.println("2: Gerar Imagem");
-    System.out.println("3: KNN");
-    System.out.println("-1: Parar Programa");
-  }
-
-  private static String readInput(Scanner scanner) {
-    System.out.println("Escreva o nome do arquivo e extensão:");
-    var path = new StringBuilder("img/");
-    var nomeArquivo = scanner.nextLine();
-    path.append(nomeArquivo);
-    return path.toString();
-  }
-
-  private static void calcularKmeans(String path) throws IOException {
+  public void calcularKmeans(String path, int c) throws IOException {
     var img = readPathImg(path);
-    inicializarClassesAleatorios(C);
-    List<Classe> classesIteracaoAnterior = inicializarClassesParaComparacao();
+    inicializarClassesAleatorios(c);
+    List<Classe> classesIteracaoAnterior = inicializarClassesParaComparacao(c);
     int i = 0;
-    while (centrosNaoConvergiram(classesIteracaoAnterior)) {
+    while (centrosNaoConvergiram(classesIteracaoAnterior, c)) {
       classes.forEach(Classe::limparLista);
       for (Pixel ponto : dados) {
         definirClasseDeUmPonto(ponto);
@@ -89,119 +33,10 @@ public class Kmeans {
       printClasses(i);
       i++;
     }
-    gerarImagem(img);
+    gerarImagem(img, path, c);
   }
 
-  private static ArrayList<Classe> inicializarClassesParaComparacao() {
-    return IntStream.range(0, C).mapToObj(c -> new Classe(Pixel.random())).collect(Collectors.toCollection(ArrayList::new));
-  }
-
-  private static boolean centrosNaoConvergiram(List<Classe> classesIteracaoAnterior) {
-    boolean naoConvergiram = !classesIteracaoAnterior.equals(classes);
-    IntStream.range(0, C).forEachOrdered(j -> classesIteracaoAnterior.get(j).setCentro(classes.get(j).getCentro()));
-    return naoConvergiram;
-  }
-
-  private static void gerarImagemAPartirDosClassesKmeans(String path)
-          throws IOException {
-    var img = readPathImg(path);
-    for (Pixel ponto : dados) {
-      definirClasseDeUmPonto(ponto);
-    }
-    gerarImagem(img);
-  }
-
-  private static void calcularKnn(String path, LinkedHashSet<Pixel> dadosRef) throws IOException {
-    URL url = Kmeans.class.getClassLoader().getResource(path);
-    var img = ImageIO.read(new File(url.getPath()));
-    dadosKnn.clear();
-    mapDadosKnn.clear();
-    for (int y = 0; y < img.getHeight(); y++) {
-      for (int x = 0; x < img.getWidth(); x++) {
-        var color = new Color(img.getRGB(x, y), true);
-        var pixel = new Pixel(color.getRed(), color.getGreen(), color.getBlue());
-        if (mapDadosKnn.containsKey(pixel)) {
-          dadosKnn.add(mapDadosKnn.get(pixel));
-        } else {
-          PriorityQueue<Pixel> fila = getFilaKVizinhosMaisProximos(dadosRef, pixel);
-          Classe categoriaMaisFrequente = getCategoriaMaisFrequente(fila);
-          pixel.setClasse(categoriaMaisFrequente);
-          dadosKnn.add(pixel);
-          mapDadosKnn.put(pixel, pixel);
-        }
-      }
-    }
-    BufferedImage outImg = getBufferedImage(img, dadosKnn);
-    final var arquivoSaida = "output" + rand.nextInt() + ".png";
-    url = Kmeans.class.getClassLoader().getResource(PATH_SAIDA);
-    ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
-    System.out.println(MENSAGEM_SAIDA);
-  }
-
-  private static PriorityQueue<Pixel> getFilaKVizinhosMaisProximos(LinkedHashSet<Pixel> dadosRef, Pixel pixel) {
-    PriorityQueue<Pixel> fila = new PriorityQueue<>(K, SORT_BY_REVERSE_PIXEL_DISTANCE);
-    for (Pixel dadoRef : dadosRef) {
-      dadoRef.setDistance(pixel.distanciaEuclidiana(dadoRef));
-      fila.offer(dadoRef);
-      if (fila.size() > K) {
-        fila.poll();
-      }
-    }
-    return fila;
-  }
-
-  private static Classe getCategoriaMaisFrequente(PriorityQueue<Pixel> fila) {
-    var qtdClasseVizinhosMaisProximos = new HashMap<Classe, Integer>();
-    var qtdMaisFrequente = 0;
-    Classe categoriaMaisFrequente = null;
-    while (Objects.nonNull(fila.peek())) {
-      var classe = fila.poll().getClasse();
-      qtdClasseVizinhosMaisProximos.put(
-              classe, qtdClasseVizinhosMaisProximos.getOrDefault(classe, 0) + 1);
-      var qtd = qtdClasseVizinhosMaisProximos.getOrDefault(classe, 0);
-      if (qtd > qtdMaisFrequente) {
-        qtdMaisFrequente = qtd;
-        categoriaMaisFrequente = classe;
-      }
-    }
-    return categoriaMaisFrequente;
-  }
-
-  private static void categorizarRef(ArrayList<Pixel> refWoods) {
-    classes.clear();
-    inicializarClassesAleatorios(1);
-    for (Pixel ponto : refWoods) {
-      definirClasseDeUmPonto(ponto);
-    }
-    classes.forEach(Classe::atualizarCentro);
-  }
-
-  private static ArrayList<Pixel> readRefImg(String path) throws IOException {
-    URL url = Kmeans.class.getClassLoader().getResource(path);
-    var img = ImageIO.read(new File(url.getPath()));
-    var ref = new ArrayList<Pixel>();
-    for (int y = 0; y < img.getHeight(); y++) {
-      for (int x = 0; x < img.getWidth(); x++) {
-        var color = new Color(img.getRGB(x, y), true);
-        var rgb = new Pixel(color.getRed(), color.getGreen(), color.getBlue());
-        ref.add(rgb);
-      }
-    }
-    return ref;
-  }
-
-  private static BufferedImage getBufferedImage(BufferedImage img, List<Pixel> dadosKnn) {
-    var outImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-    var dadosIterator = dadosKnn.iterator();
-    for (int y = 0; y < img.getHeight(); y++) {
-      for (int x = 0; x < img.getWidth(); x++) {
-        preencherOutImg(img, outImg, dadosIterator, y, x);
-      }
-    }
-    return outImg;
-  }
-
-  private static BufferedImage readPathImg(String path) throws IOException {
+  private BufferedImage readPathImg(String path) throws IOException {
     URL url = Kmeans.class.getClassLoader().getResource(path);
     var img = ImageIO.read(new File(url.getPath()));
     dados.clear();
@@ -215,30 +50,26 @@ public class Kmeans {
     return img;
   }
 
-  private static void gerarImagem(BufferedImage img) throws IOException {
-    BufferedImage outImg = getBufferedImage(img, dados);
-    final var arquivoSaida = "output" + rand.nextInt() + ".png";
-    URL url = Kmeans.class.getClassLoader().getResource(PATH_SAIDA);
-    ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
-    System.out.println(MENSAGEM_SAIDA);
-  }
-
-  private static void preencherOutImg(
-    BufferedImage img, BufferedImage outImg, Iterator<Pixel> dadosIterator, int y, int x) {
-    if (dadosIterator.hasNext()) {
-      int pixel = img.getRGB(x, y);
-      var color = new Color(pixel, true);
-      var centro = dadosIterator.next().getClasse().getCentro();
-      int p = getPixel(color.getAlpha(), centro.getR(), centro.getG(), centro.getB());
-      outImg.setRGB(x, y, p);
+  private void inicializarClassesAleatorios(int numeroClasses) {
+    for (int i = 0; i < numeroClasses; i++) {
+      classes.add(new Classe(Pixel.random()));
     }
   }
 
-  private static int getPixel(int a, int r, int g, int b) {
-    return (a << 24) | (r << 16) | (g << 8) | b;
+  private ArrayList<Classe> inicializarClassesParaComparacao(int c) {
+    return IntStream.range(0, c)
+        .mapToObj(classe -> new Classe(Pixel.random()))
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static void definirClasseDeUmPonto(Pixel ponto) {
+  private boolean centrosNaoConvergiram(List<Classe> classesIteracaoAnterior, int c) {
+    boolean naoConvergiram = !classesIteracaoAnterior.equals(classes);
+    IntStream.range(0, c)
+        .forEachOrdered(j -> classesIteracaoAnterior.get(j).setCentro(classes.get(j).getCentro()));
+    return naoConvergiram;
+  }
+
+  private void definirClasseDeUmPonto(Pixel ponto) {
     var menorDist = Double.MAX_VALUE;
     Classe maisProx = null;
     for (Classe classe : classes) {
@@ -253,7 +84,7 @@ public class Kmeans {
     }
   }
 
-  private static void printClasses(int i) {
+  private void printClasses(int i) {
     i++;
     System.out.println("Iteracao = " + i);
     for (int c = 0; c < classes.size(); c++) {
@@ -262,9 +93,37 @@ public class Kmeans {
     }
   }
 
-  private static void inicializarClassesAleatorios(int numeroClasses) {
-    for (int i = 0; i < numeroClasses; i++) {
-      classes.add(new Classe(Pixel.random()));
+  private void gerarImagem(BufferedImage img, String path, int c) throws IOException {
+    BufferedImage outImg = getBufferedImage(img, dados);
+    var arquivoSaida = String.format("output_file=%s_C=%d.png", path.replace("img/", "").split("\\.")[0], c);
+    URL url = Main.class.getClassLoader().getResource(PATH_SAIDA);
+    ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
+    System.out.println(String.format(MENSAGEM_SAIDA, arquivoSaida));
+  }
+
+  private BufferedImage getBufferedImage(BufferedImage img, List<Pixel> dadosKnn) {
+    var outImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    var dadosIterator = dadosKnn.iterator();
+    for (int y = 0; y < img.getHeight(); y++) {
+      for (int x = 0; x < img.getWidth(); x++) {
+        preencherOutImg(img, outImg, dadosIterator, y, x);
+      }
     }
+    return outImg;
+  }
+
+  private void preencherOutImg(
+      BufferedImage img, BufferedImage outImg, Iterator<Pixel> dadosIterator, int y, int x) {
+    if (dadosIterator.hasNext()) {
+      int pixel = img.getRGB(x, y);
+      var color = new Color(pixel, true);
+      var centro = dadosIterator.next().getClasse().getCentro();
+      int p = getPixel(color.getAlpha(), centro.getR(), centro.getG(), centro.getB());
+      outImg.setRGB(x, y, p);
+    }
+  }
+
+  private int getPixel(int a, int r, int g, int b) {
+    return (a << 24) | (r << 16) | (g << 8) | b;
   }
 }

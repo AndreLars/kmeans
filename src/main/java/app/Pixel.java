@@ -60,15 +60,15 @@ public class Pixel {
     return distance;
   }
 
-  public void setDistance(double distance) {
-    this.distance = distance;
+  public void setDistance(Pixel pixel) {
+    this.distance = distanciaEuclidiana(pixel);
   }
 
-  public double distanciaEuclidiana(Pixel ponto) {
+  public double distanciaEuclidiana(Pixel pixel) {
     return Math.sqrt(
-        Math.pow((double) r - ponto.getR(), 2)
-            + Math.pow((double) g - ponto.getG(), 2)
-            + Math.pow((double) b - ponto.getB(), 2));
+        Math.pow((double) r - pixel.getR(), 2)
+            + Math.pow((double) g - pixel.getG(), 2)
+            + Math.pow((double) b - pixel.getB(), 2));
   }
 
   @Override

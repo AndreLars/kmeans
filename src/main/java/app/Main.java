@@ -11,22 +11,29 @@ public class Main {
 
   public static void main(String[] args) throws IOException {
     var scanner = new Scanner(System.in);
-    while (true) {
-      var dadosRef = knn.construirDadosReferenciaKNN();
+    var dadosRef = knn.construirDadosReferenciaKNN();
+    boolean stop = false;
+    while (!stop) {
       printMenu();
       int input = Integer.parseInt(scanner.nextLine());
-      if (input == 1) {
-        System.out.println("Insira o valor de Classes/Categorias do K-Means");
-        int c = Integer.parseInt(scanner.nextLine());
-        var path = readInput(scanner);
-        kmeans.calcularKmeans(path, c);
-      } else if (input == 2) {
-        System.out.println("Insira o valor de vizinhos do KNN");
-        int k = Integer.parseInt(scanner.nextLine());
-        var path = readInput(scanner);
-        knn.calcularKnn(path, dadosRef, k);
-      } else if (input == -1) {
-        break;
+      switch (input) {
+        case 1: {
+          System.out.println("Insira o valor de Classes/Categorias do K-Means");
+          int c = Integer.parseInt(scanner.nextLine());
+          var path = readInput(scanner);
+          kmeans.calcularKmeans(path, c);
+          break;
+        }
+        case 2: {
+          System.out.println("Insira o valor de vizinhos do KNN");
+          int k = Integer.parseInt(scanner.nextLine());
+          var path = readInput(scanner);
+          knn.calcularKnn(path, dadosRef, k);
+          break;
+        }
+        default:
+          stop = true;
+          break;
       }
     }
   }

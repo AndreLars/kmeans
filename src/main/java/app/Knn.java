@@ -28,9 +28,9 @@ public class Knn {
 
   public Set<Pixel> construirDadosReferenciaKNN() throws IOException {
     var refRoad = readRefImg("ref/road.jpeg");
-    categorizarRef(refRoad);
+    classificarReferencia(refRoad);
     var refWoods = readRefImg("ref/woods.jpeg");
-    categorizarRef(refWoods);
+    classificarReferencia(refWoods);
     var dadosRef = new LinkedHashSet<>(refRoad);
     dadosRef.addAll(refWoods);
     classes.clear();
@@ -51,7 +51,7 @@ public class Knn {
     return ref;
   }
 
-  private void categorizarRef(ArrayList<Pixel> refWoods) {
+  private void classificarReferencia(ArrayList<Pixel> refWoods) {
     classes.clear();
     classes.add(new Classe(Pixel.random()));
     for (Pixel ponto : refWoods) {
@@ -88,7 +88,7 @@ public class Knn {
           dadosKnn.add(dadosJaProcessados.get(pixel));
         } else {
           PriorityQueue<Pixel> fila = getKVizinhosMaisProximos(dadosRef, pixel, k);
-          Classe classeMaisFrequente = getCategoriaMaisFrequente(fila);
+          Classe classeMaisFrequente = getClasseMaisFrequente(fila);
           pixel.setClasse(classeMaisFrequente);
           dadosKnn.add(pixel);
           dadosJaProcessados.put(pixel, pixel);
@@ -104,26 +104,26 @@ public class Knn {
   }
 
   private PriorityQueue<Pixel> getKVizinhosMaisProximos(Set<Pixel> dadosRef, Pixel pixel, int k) {
-    PriorityQueue<Pixel> fila = new PriorityQueue<>(k, SORT_BY_REVERSE_PIXEL_DISTANCE);
+    var vizinhosMaisProximos = new PriorityQueue<>(k, SORT_BY_REVERSE_PIXEL_DISTANCE);
     for (Pixel dadoRef : dadosRef) {
-      dadoRef.setDistance(pixel.distanciaEuclidiana(dadoRef));
-      fila.offer(dadoRef);
-      if (fila.size() > k) {
-        fila.poll();
+      dadoRef.setDistance(pixel);
+      vizinhosMaisProximos.offer(dadoRef);
+      if (vizinhosMaisProximos.size() > k) {
+        vizinhosMaisProximos.poll();
       }
     }
-    return fila;
+    return vizinhosMaisProximos;
   }
 
-  private Classe getCategoriaMaisFrequente(PriorityQueue<Pixel> fila) {
-    var qtdClasse = new HashMap<Classe, Integer>();
+  private Classe getClasseMaisFrequente(PriorityQueue<Pixel> fila) {
+    var mapClasseQtd = new HashMap<Classe, Integer>();
     int qtdMaisFrequente = 0;
     Classe classeMaisFrequente = null;
     while (Objects.nonNull(fila.peek())) {
       var classe = fila.poll().getClasse();
-      var qtdAtualOuZero = qtdClasse.getOrDefault(classe, 0);
-      qtdClasse.put(classe, qtdAtualOuZero + 1);
-      var qtd = qtdClasse.get(classe);
+      var qtdAtualOuZero = mapClasseQtd.getOrDefault(classe, 0);
+      mapClasseQtd.put(classe, qtdAtualOuZero + 1);
+      var qtd = mapClasseQtd.get(classe);
       if (qtd > qtdMaisFrequente) {
         qtdMaisFrequente = qtd;
         classeMaisFrequente = classe;

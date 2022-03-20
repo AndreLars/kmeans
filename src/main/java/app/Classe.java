@@ -6,11 +6,11 @@ import java.util.Objects;
 
 public class Classe {
     private Pixel centro;
-    private List<Pixel> pontosAssociados;
+    private List<Pixel> pixelsAssociados;
 
     public Classe(Pixel centro) {
         this.centro = centro;
-        this.pontosAssociados = new ArrayList<>();
+        this.pixelsAssociados = new ArrayList<>();
     }
 
     public Pixel getCentro() {
@@ -21,39 +21,39 @@ public class Classe {
         this.centro = centro;
     }
 
-    public List<Pixel> getPontosAssociados() {
-        return pontosAssociados;
+    public List<Pixel> getPixelsAssociados() {
+        return pixelsAssociados;
     }
 
-    public void setPontosAssociados(List<Pixel> pontosAssociados) {
-        this.pontosAssociados = pontosAssociados;
+    public void setPixelsAssociados(List<Pixel> pixelsAssociados) {
+        this.pixelsAssociados = pixelsAssociados;
     }
 
     public void addPonto(Pixel ponto) {
-        this.pontosAssociados.add(ponto);
+        this.pixelsAssociados.add(ponto);
         ponto.setClasse(this);
     }
 
     public void atualizarCentro() {
-        if(!pontosAssociados.isEmpty()) {
+        if(!pixelsAssociados.isEmpty()) {
             var novoCentro = new Pixel();
             var somatorioR = 0;
             var somatorioG = 0;
             var somatorioB = 0;
-            for(Pixel ponto : pontosAssociados) {
+            for(Pixel ponto : pixelsAssociados) {
                 somatorioR += ponto.getR();
                 somatorioG += ponto.getG();
                 somatorioB += ponto.getB();
             }
-            novoCentro.setR(somatorioR / pontosAssociados.size());
-            novoCentro.setG(somatorioG / pontosAssociados.size());
-            novoCentro.setB(somatorioB / pontosAssociados.size());
+            novoCentro.setR(somatorioR / pixelsAssociados.size());
+            novoCentro.setG(somatorioG / pixelsAssociados.size());
+            novoCentro.setB(somatorioB / pixelsAssociados.size());
             setCentro(novoCentro);
         }
     }
 
     public void limparLista() {
-        setPontosAssociados(new ArrayList<>());
+        setPixelsAssociados(new ArrayList<>());
     }
 
     @Override

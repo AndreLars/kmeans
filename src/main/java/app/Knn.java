@@ -100,7 +100,8 @@ public class Knn {
         String.format("output_file=%s_K=%d.png", path.replace("img/", "").split("\\.")[0], k);
     url = Main.class.getClassLoader().getResource(PATH_SAIDA);
     ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
-    System.out.println(String.format(MENSAGEM_SAIDA, arquivoSaida));
+    var stringSaida = String.format(MENSAGEM_SAIDA, arquivoSaida);
+    System.out.println(stringSaida);
   }
 
   private PriorityQueue<Pixel> getKVizinhosMaisProximos(Set<Pixel> dadosRef, Pixel pixel, int k) {

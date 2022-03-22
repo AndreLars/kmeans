@@ -19,9 +19,9 @@ public class Main {
       switch (input) {
         case 1: {
           System.out.println("Insira o valor de Classes/Categorias do K-Means");
-          int c = Integer.parseInt(scanner.nextLine());
+          int k = Integer.parseInt(scanner.nextLine());
           var path = readInput(scanner);
-          kmeans.calcularKmeans(path, c);
+          kmeans.calcularKmeans(path, k);
           break;
         }
         case 2: {

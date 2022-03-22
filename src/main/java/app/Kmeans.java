@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,12 +19,12 @@ public class Kmeans {
   private final List<Classe> classes = new ArrayList<>();
   private final List<Pixel> dados = new ArrayList<>();
 
-  public void calcularKmeans(String path, int c) throws IOException {
+  public void calcularKmeans(String path, int k) throws IOException {
     var img = readPathImg(path);
-    inicializarClassesAleatorios(c);
-    List<Classe> classesIteracaoAnterior = inicializarClassesParaComparacao(c);
+    inicializarClassesAleatorios(k);
+    List<Classe> classesIteracaoAnterior = inicializarClassesParaComparacao(k);
     int i = 0;
-    while (centrosNaoConvergiram(classesIteracaoAnterior, c)) {
+    while (centrosNaoConvergiram(classesIteracaoAnterior, k)) {
       classes.forEach(Classe::limparLista);
       for (Pixel ponto : dados) {
         definirClasseDeUmPonto(ponto);
@@ -33,7 +32,7 @@ public class Kmeans {
       printClasses(i);
       i++;
     }
-    gerarImagem(img, path, c);
+    gerarImagem(img, path, k);
   }
 
   private BufferedImage readPathImg(String path) throws IOException {
@@ -62,25 +61,25 @@ public class Kmeans {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private boolean centrosNaoConvergiram(List<Classe> classesIteracaoAnterior, int c) {
+  private boolean centrosNaoConvergiram(List<Classe> classesIteracaoAnterior, int k) {
     boolean naoConvergiram = !classesIteracaoAnterior.equals(classes);
-    IntStream.range(0, c)
-        .forEachOrdered(j -> classesIteracaoAnterior.get(j).setCentro(classes.get(j).getCentro()));
+    IntStream.range(0, k)
+        .forEachOrdered(i -> classesIteracaoAnterior.get(i).setCentro(classes.get(i).getCentro()));
     return naoConvergiram;
   }
 
-  private void definirClasseDeUmPonto(Pixel ponto) {
+  private void definirClasseDeUmPonto(Pixel pixel) {
     var menorDist = Double.MAX_VALUE;
     Classe maisProx = null;
     for (Classe classe : classes) {
-      var dist = ponto.distanciaEuclidiana(classe.getCentro());
+      var dist = pixel.distanciaEuclidiana(classe.getCentro());
       if (dist < menorDist) {
         menorDist = dist;
         maisProx = classe;
       }
     }
     if (maisProx != null) {
-      maisProx.addPonto(ponto);
+      maisProx.addPixel(pixel);
     }
   }
 

@@ -29,7 +29,7 @@ public class Classe {
         this.pixelsAssociados = pixelsAssociados;
     }
 
-    public void addPonto(Pixel ponto) {
+    public void addPixel(Pixel ponto) {
         this.pixelsAssociados.add(ponto);
         ponto.setClasse(this);
     }

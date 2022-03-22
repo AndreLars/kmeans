@@ -71,7 +71,7 @@ public class Knn {
       }
     }
     if (maisProx != null) {
-      maisProx.addPonto(ponto);
+      maisProx.addPixel(ponto);
     }
   }
 

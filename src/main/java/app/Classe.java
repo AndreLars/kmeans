@@ -31,20 +31,17 @@ public class Classe {
     }
 
     public void atualizarCentro() {
-        if(!pixelsAssociados.isEmpty()) {
-            var novoCentro = new Pixel();
-            var somatorioR = 0;
-            var somatorioG = 0;
-            var somatorioB = 0;
-            for(Pixel ponto : pixelsAssociados) {
-                somatorioR += ponto.getR();
-                somatorioG += ponto.getG();
-                somatorioB += ponto.getB();
+        if (!pixelsAssociados.isEmpty()) {
+            int somR = 0;
+            int somG = 0;
+            int somB = 0;
+            for (Pixel pixel : pixelsAssociados) {
+                somR += pixel.getR();
+                somG += pixel.getG();
+                somB += pixel.getB();
             }
-            novoCentro.setR(somatorioR / pixelsAssociados.size());
-            novoCentro.setG(somatorioG / pixelsAssociados.size());
-            novoCentro.setB(somatorioB / pixelsAssociados.size());
-            setCentro(novoCentro);
+            int size = pixelsAssociados.size();
+            setCentro(new Pixel(somR / size, somG / size, somB / size));
         }
     }
 
@@ -54,9 +51,7 @@ public class Classe {
 
     @Override
     public String toString() {
-        return "Classe{" +
-                "centro=" + centro +
-                '}';
+        return "Classe{" + "centro=" + centro + '}';
     }
 
     @Override

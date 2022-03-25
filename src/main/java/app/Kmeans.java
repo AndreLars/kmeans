@@ -1,5 +1,8 @@
 package app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -18,6 +21,7 @@ import static app.Main.PATH_SAIDA;
 public class Kmeans {
   private final List<Classe> classes = new ArrayList<>();
   private final List<Pixel> dados = new ArrayList<>();
+  private static final Logger LOGGER = LoggerFactory.getLogger(Kmeans.class);
 
   public void calcularKmeans(String path, int k) throws IOException {
     var img = readPathImg(path);
@@ -85,10 +89,10 @@ public class Kmeans {
 
   private void printClasses(int i) {
     i++;
-    System.out.println("Iteracao = " + i);
+    LOGGER.info("Iteracao = {}", i);
     for (int c = 0; c < classes.size(); c++) {
       classes.get(c).atualizarCentro();
-      System.out.println("Classe " + c + ": " + classes.get(c));
+      LOGGER.info("Classe {}: {}", c, classes.get(c));
     }
   }
 
@@ -97,7 +101,7 @@ public class Kmeans {
     var arquivoSaida = String.format("output_file=%s_C=%d.png", path.replace("img/", "").split("\\.")[0], c);
     URL url = Main.class.getClassLoader().getResource(PATH_SAIDA);
     ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
-    System.out.println(String.format(MENSAGEM_SAIDA, arquivoSaida));
+    LOGGER.info(MENSAGEM_SAIDA, arquivoSaida);
   }
 
   private BufferedImage getBufferedImage(BufferedImage img, List<Pixel> dadosKnn) {

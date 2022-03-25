@@ -73,11 +73,7 @@ public class Pixel {
 
   @Override
   public String toString() {
-    return "Rgb{" +
-            "r=" + r +
-            ", g=" + g +
-            ", b=" + b +
-            '}';
+    return "Rgb{" + "r=" + r + ", g=" + g + ", b=" + b + '}';
   }
 
   @Override

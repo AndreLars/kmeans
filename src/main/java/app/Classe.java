@@ -21,10 +21,6 @@ public class Classe {
         this.centro = centro;
     }
 
-    public List<Pixel> getPixelsAssociados() {
-        return pixelsAssociados;
-    }
-
     public void setPixelsAssociados(List<Pixel> pixelsAssociados) {
         this.pixelsAssociados = pixelsAssociados;
     }

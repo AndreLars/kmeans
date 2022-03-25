@@ -1,5 +1,8 @@
 package app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -25,6 +28,7 @@ public class Knn {
   private final Map<Pixel, Pixel> dadosJaProcessados = new HashMap<>();
   private static final SortByReversePixelDistance SORT_BY_REVERSE_PIXEL_DISTANCE =
       new SortByReversePixelDistance();
+  private static final Logger LOGGER = LoggerFactory.getLogger(Knn.class);
 
   public Set<Pixel> construirDadosReferenciaKNN() throws IOException {
     var refRoad = readRefImg("ref/road.jpeg");
@@ -100,8 +104,7 @@ public class Knn {
         String.format("output_file=%s_K=%d.png", path.replace("img/", "").split("\\.")[0], k);
     url = Main.class.getClassLoader().getResource(PATH_SAIDA);
     ImageIO.write(outImg, "png", new File(url.getPath() + arquivoSaida));
-    var stringSaida = String.format(MENSAGEM_SAIDA, arquivoSaida);
-    System.out.println(stringSaida);
+    LOGGER.info(MENSAGEM_SAIDA, arquivoSaida);
   }
 
   private PriorityQueue<Pixel> getKVizinhosMaisProximos(Set<Pixel> dadosRef, Pixel pixel, int k) {

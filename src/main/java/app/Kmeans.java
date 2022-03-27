@@ -58,10 +58,10 @@ public class Kmeans {
         }
     }
 
-    private ArrayList<Classe> inicializarClassesParaComparacao(int c) {
-        return IntStream.range(0, c)
+    private List<Classe> inicializarClassesParaComparacao(int k) {
+        return IntStream.range(0, k)
                 .mapToObj(classe -> new Classe(Pixel.random()))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
     private boolean centrosNaoConvergiram(List<Classe> classesIteracaoAnterior, int k) {
